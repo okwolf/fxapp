@@ -6,7 +6,7 @@
     "jsxFactory": "h",
     "baseUrl": "../..",
     "paths": {
-      "hyperapp": ["src", "hyperapp.d.ts"]
+      "fxapp": ["src", "fxapp.d.ts"]
     }
   },
   "include": ["*.ts", "*.tsx", "**/*.ts", "**/*.tsx"]

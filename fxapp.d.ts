@@ -1,4 +1,4 @@
-export as namespace Hyperapp
+export as namespace FxApp
 
 /** @namespace [VDOM] */
 

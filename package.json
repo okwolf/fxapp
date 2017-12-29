@@ -1,28 +1,29 @@
 {
-  "name": "hyperapp",
-  "description": "1 KB JavaScript library for building frontend applications.",
-  "version": "1.0.0",
-  "main": "dist/hyperapp.js",
+  "name": "fxapp",
+  "description": "Effects as data for building JavaScript apps",
+  "version": "0.0.1",
+  "main": "dist/fxapp.js",
   "jsnext:main": "src/index.js",
   "module": "src/index.js",
-  "typings": "hyperapp.d.ts",
+  "typings": "fxapp.d.ts",
   "license": "MIT",
-  "repository": "hyperapp/hyperapp",
+  "repository": "fxapp/fxapp",
   "files": [
     "src",
     "dist",
-    "hyperapp.d.ts"
+    "fxapp.d.ts"
   ],
-  "author": "Jorge Bucaran",
+  "author": "Wolfgang Wedemeyer",
   "keywords": [
-    "hyperapp",
+    "effects",
+    "data",
     "vdom"
   ],
   "scripts": {
     "test": "jest --coverage --no-cache && tsc -p test/ts",
     "build": "npm run bundle && npm run minify",
-    "bundle": "rollup -i src/index.js -o dist/hyperapp.js -m -f umd -n hyperapp",
-    "minify": "uglifyjs dist/hyperapp.js -o dist/hyperapp.js -mc pure_funcs=Object.defineProperty --source-map includeSources,url=hyperapp.js.map",
+    "bundle": "rollup -i src/index.js -o dist/fxapp.js -m -f umd -n fxapp",
+    "minify": "uglifyjs dist/fxapp.js -o dist/fxapp.js -mc pure_funcs=Object.defineProperty --source-map includeSources,url=fxapp.js.map",
     "prepare": "npm run build",
     "format": "prettier --semi false --write {src,test}/**/*.js {,test/ts/}*.{ts,tsx}",
     "release": "npm run build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"

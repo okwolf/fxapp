@@ -1,4 +1,4 @@
-import { h, app, ActionsType, View } from "hyperapp"
+import { h, app, ActionsType, View } from "fxapp"
 
 namespace Counter {
   export interface State {
