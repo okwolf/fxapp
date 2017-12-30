@@ -13,10 +13,10 @@ test("positional String/Number children", () => {
     ["foo", "bar", "baz"]
   ])
 
-  expect(h("div", 1, "foo", 2, "baz", 3)).toEqual([
+  expect(h("div", 0, "foo", 1, "baz", 2)).toEqual([
     "div",
     {},
-    ["1", "foo", "2", "baz", "3"]
+    ["0", "foo", "1", "baz", "2"]
   ])
 
   expect(h("div", "foo", h("div", "bar"), "baz", "quux")).toEqual([

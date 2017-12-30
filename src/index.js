@@ -12,7 +12,7 @@ export function h() {
   }
   var children = []
   function isValidChild(child) {
-    return child && child !== true
+    return child != null && true !== child && false !== child
   }
   function convertChild(child) {
     return typeof child === "number" ? child + "" : child
