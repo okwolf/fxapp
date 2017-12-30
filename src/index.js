@@ -1,61 +1,57 @@
-export function h(name, props) {
-  var node
-  var stack = []
-  var children = []
-
-  for (var i = arguments.length; i-- > 2; ) {
-    stack.push(arguments[i])
+export function h() {
+  var args = arguments
+  var first = args[0]
+  if (typeof first === "function") {
+    return first(args[1] || {}, args[2])
   }
-
-  while (stack.length) {
-    if (Array.isArray((node = stack.pop()))) {
-      for (i = node.length; i--; ) {
-        stack.push(node[i])
-      }
-    } else if (null == node || true === node || false === node) {
-    } else {
-      children.push(typeof node === "number" ? node + "" : node)
+  var vnode = [first]
+  var length = args.length
+  var i = 1
+  var second = args[i]
+  if (second === Object(second) && !Array.isArray(second)) {
+    vnode.push(second)
+    i++
+  } else {
+    vnode.push({})
+  }
+  var children = []
+  function isValidChild(child) {
+    return child && child !== true
+  }
+  function convertChild(child) {
+    return typeof child === "number" ? child + "" : child
+  }
+  function addChild(child) {
+    if (Array.isArray(child)) {
+      children.push(child.filter(isValidChild).map(convertChild))
+    } else if (isValidChild(child)) {
+      children.push(convertChild(child))
     }
   }
+  for (; i < length; i++) {
+    addChild(args[i])
+  }
+  vnode.push(children)
 
-  return typeof name === "string"
-    ? {
-        name: name,
-        props: props || {},
-        children: children
-      }
-    : name(props || {}, children)
+  return vnode
 }
 
 export function app(state, actions, view, container) {
   var patchLock
   var lifecycle = []
+  container = container || document.body
   var root = container && container.children[0]
-  var node = vnode(root, [].map)
+  var node = root
 
   repaint(init([], (state = copy(state)), (actions = copy(actions))))
 
   return actions
 
-  function vnode(element, map) {
-    return (
-      element && {
-        name: element.nodeName.toLowerCase(),
-        props: {},
-        children: map.call(element.childNodes, function(element) {
-          return 3 === element.nodeType
-            ? element.nodeValue
-            : vnode(element, map)
-        })
-      }
-    )
-  }
-
   function render(next) {
     patchLock = !patchLock
     next = view(state, actions)
 
-    if (container && !patchLock) {
+    if (container && next && !patchLock) {
       root = patch(container, root, node, (node = next))
     }
 
@@ -121,7 +117,7 @@ export function app(state, actions, view, container) {
   }
 
   function getKey(node) {
-    return node && node.props ? node.props.key : null
+    return node && node[1] ? node[1].key : null
   }
 
   function setElementProp(element, name, value, oldValue) {
@@ -146,25 +142,28 @@ export function app(state, actions, view, container) {
   }
 
   function createElement(node, isSVG) {
+    var name = node[0]
+    var props = node[1]
+    var children = node[2]
     if (typeof node === "string") {
       var element = document.createTextNode(node)
     } else {
-      var element = (isSVG = isSVG || "svg" === node.name)
-        ? document.createElementNS("http://www.w3.org/2000/svg", node.name)
-        : document.createElement(node.name)
+      var element = (isSVG = isSVG || "svg" === name)
+        ? document.createElementNS("http://www.w3.org/2000/svg", name)
+        : document.createElement(name)
 
-      if (node.props.oncreate) {
+      if (props.oncreate) {
         lifecycle.push(function() {
-          node.props.oncreate(element)
+          props.oncreate(element)
         })
       }
 
-      for (var i = 0; i < node.children.length; i++) {
-        element.appendChild(createElement(node.children[i], isSVG))
+      for (var i = 0; i < children.length; i++) {
+        element.appendChild(createElement(children[i], isSVG))
       }
 
-      for (var name in node.props) {
-        setElementProp(element, name, node.props[name])
+      for (var name in props) {
+        setElementProp(element, name, props[name])
       }
     }
     return element
@@ -190,9 +189,10 @@ export function app(state, actions, view, container) {
   }
 
   function removeChildren(element, node, props) {
-    if ((props = node.props)) {
-      for (var i = 0; i < node.children.length; i++) {
-        removeChildren(element.childNodes[i], node.children[i])
+    var children = node[2]
+    if ((props = node[1])) {
+      for (var i = 0; i < children.length; i++) {
+        removeChildren(element.childNodes[i], children[i])
       }
 
       if (props.ondestroy) {
@@ -203,11 +203,12 @@ export function app(state, actions, view, container) {
   }
 
   function removeElement(parent, element, node, cb) {
+    var props = node[1]
     function done() {
       parent.removeChild(removeChildren(element, node))
     }
 
-    if (node.props && (cb = node.props.onremove)) {
+    if (props && (cb = props.onremove)) {
       cb(element, done)
     } else {
       done()
@@ -215,20 +216,26 @@ export function app(state, actions, view, container) {
   }
 
   function patch(parent, element, oldNode, node, isSVG, nextSibling) {
+    var name = node[0]
+    var props = node[1]
+    var children = node[2]
+    var oldName = oldNode && oldNode[0]
+    var oldProps = oldNode && oldNode[1]
+    var oldChildren = oldNode && oldNode[2]
     if (node === oldNode) {
     } else if (null == oldNode) {
       element = parent.insertBefore(createElement(node, isSVG), element)
-    } else if (node.name && node.name === oldNode.name) {
-      updateElement(element, oldNode.props, node.props)
+    } else if (name && name === oldName) {
+      updateElement(element, oldProps, props)
 
       var oldElements = []
       var oldKeyed = {}
       var newKeyed = {}
 
-      for (var i = 0; i < oldNode.children.length; i++) {
+      for (var i = 0; i < oldChildren.length; i++) {
         oldElements[i] = element.childNodes[i]
 
-        var oldChild = oldNode.children[i]
+        var oldChild = oldChildren[i]
         var oldKey = getKey(oldChild)
 
         if (null != oldKey) {
@@ -239,9 +246,9 @@ export function app(state, actions, view, container) {
       var i = 0
       var j = 0
 
-      while (j < node.children.length) {
-        var oldChild = oldNode.children[i]
-        var newChild = node.children[j]
+      while (j < children.length) {
+        var oldChild = oldChildren[i]
+        var newChild = children[j]
 
         var oldKey = getKey(oldChild)
         var newKey = getKey(newChild)
@@ -280,8 +287,8 @@ export function app(state, actions, view, container) {
         }
       }
 
-      while (i < oldNode.children.length) {
-        var oldChild = oldNode.children[i]
+      while (i < oldChildren.length) {
+        var oldChild = oldChildren[i]
         if (null == getKey(oldChild)) {
           removeElement(element, oldElements[i], oldChild)
         }
@@ -289,12 +296,10 @@ export function app(state, actions, view, container) {
       }
 
       for (var i in oldKeyed) {
-        if (!newKeyed[oldKeyed[i][1].props.key]) {
+        if (!newKeyed[oldKeyed[i][1][1].key]) {
           removeElement(element, oldKeyed[i][0], oldKeyed[i][1])
         }
       }
-    } else if (node.name === oldNode.name) {
-      element.nodeValue = node
     } else {
       element = parent.insertBefore(
         createElement(node, isSVG),

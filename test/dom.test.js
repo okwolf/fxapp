@@ -28,10 +28,10 @@ function testTreeSegue(name, trees) {
           oncreate: actions.next,
           onupdate: actions.next
         },
-        [trees[state.index].tree]
+        trees[state.index].tree
       )
 
-    app(state, actions, view, document.body)
+    app(state, actions, view)
   })
 }
 
@@ -41,18 +41,18 @@ beforeEach(() => {
 
 testTreeSegue("replace element", [
   {
-    tree: h("main", {}),
+    tree: h("main"),
     html: `<main></main>`
   },
   {
-    tree: h("div", {}),
+    tree: h("div"),
     html: `<div></div>`
   }
 ])
 
 testTreeSegue("replace child", [
   {
-    tree: h("main", {}, [h("div", {}, "foo")]),
+    tree: h("main", h("div", "foo")),
     html: `
         <main>
           <div>foo</div>
@@ -60,7 +60,7 @@ testTreeSegue("replace child", [
       `
   },
   {
-    tree: h("main", {}, [h("main", {}, "bar")]),
+    tree: h("main", h("main", "bar")),
     html: `
         <main>
           <main>bar</main>
@@ -71,7 +71,8 @@ testTreeSegue("replace child", [
 
 testTreeSegue("insert children on top", [
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h(
         "div",
         {
@@ -82,7 +83,7 @@ testTreeSegue("insert children on top", [
         },
         "A"
       )
-    ]),
+    ),
     html: `
         <main>
           <div id="a">A</div>
@@ -90,7 +91,8 @@ testTreeSegue("insert children on top", [
       `
   },
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h(
         "div",
         {
@@ -102,7 +104,7 @@ testTreeSegue("insert children on top", [
         "B"
       ),
       h("div", { key: "a" }, "A")
-    ]),
+    ),
     html: `
         <main>
           <div id="b">B</div>
@@ -111,7 +113,8 @@ testTreeSegue("insert children on top", [
       `
   },
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h(
         "div",
         {
@@ -124,7 +127,7 @@ testTreeSegue("insert children on top", [
       ),
       h("div", { key: "b" }, "B"),
       h("div", { key: "a" }, "A")
-    ]),
+    ),
     html: `
         <main>
           <div id="c">C</div>
@@ -134,7 +137,8 @@ testTreeSegue("insert children on top", [
       `
   },
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h(
         "div",
         {
@@ -148,7 +152,7 @@ testTreeSegue("insert children on top", [
       h("div", { key: "c" }, "C"),
       h("div", { key: "b" }, "B"),
       h("div", { key: "a" }, "A")
-    ]),
+    ),
     html: `
         <main>
           <div id="d">D</div>
@@ -162,7 +166,7 @@ testTreeSegue("insert children on top", [
 
 testTreeSegue("remove text node", [
   {
-    tree: h("main", {}, [h("div", {}, ["foo"]), "bar"]),
+    tree: h("main", h("div", "foo"), "bar"),
     html: `
         <main>
           <div>foo</div>
@@ -171,7 +175,7 @@ testTreeSegue("remove text node", [
       `
   },
   {
-    tree: h("main", {}, [h("div", {}, ["foo"])]),
+    tree: h("main", h("div", "foo")),
     html: `
         <main>
           <div>foo</div>
@@ -182,7 +186,8 @@ testTreeSegue("remove text node", [
 
 testTreeSegue("replace keyed", [
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h(
         "div",
         {
@@ -193,7 +198,7 @@ testTreeSegue("replace keyed", [
         },
         "A"
       )
-    ]),
+    ),
     html: `
         <main>
           <div id="a">A</div>
@@ -201,7 +206,8 @@ testTreeSegue("replace keyed", [
       `
   },
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h(
         "div",
         {
@@ -212,7 +218,7 @@ testTreeSegue("replace keyed", [
         },
         "B"
       )
-    ]),
+    ),
     html: `
         <main>
           <div id="b">B</div>
@@ -223,7 +229,8 @@ testTreeSegue("replace keyed", [
 
 testTreeSegue("reorder keyed", [
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h(
         "div",
         {
@@ -274,7 +281,7 @@ testTreeSegue("reorder keyed", [
         },
         "E"
       )
-    ]),
+    ),
     html: `
         <main>
           <div id="a">A</div>
@@ -286,13 +293,14 @@ testTreeSegue("reorder keyed", [
       `
   },
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h("div", { key: "e" }, "E"),
       h("div", { key: "a" }, "A"),
       h("div", { key: "b" }, "B"),
       h("div", { key: "c" }, "C"),
       h("div", { key: "d" }, "D")
-    ]),
+    ),
     html: `
         <main>
           <div id="e">E</div>
@@ -304,13 +312,14 @@ testTreeSegue("reorder keyed", [
       `
   },
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h("div", { key: "e" }, "E"),
       h("div", { key: "d" }, "D"),
       h("div", { key: "a" }, "A"),
       h("div", { key: "c" }, "C"),
       h("div", { key: "b" }, "B")
-    ]),
+    ),
     html: `
         <main>
           <div id="e">E</div>
@@ -322,13 +331,14 @@ testTreeSegue("reorder keyed", [
       `
   },
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h("div", { key: "c" }, "C"),
       h("div", { key: "e" }, "E"),
       h("div", { key: "b" }, "B"),
       h("div", { key: "a" }, "A"),
       h("div", { key: "d" }, "D")
-    ]),
+    ),
     html: `
         <main>
           <div id="c">C</div>
@@ -343,7 +353,8 @@ testTreeSegue("reorder keyed", [
 
 testTreeSegue("grow/shrink keyed", [
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h(
         "div",
         {
@@ -394,7 +405,7 @@ testTreeSegue("grow/shrink keyed", [
         },
         "E"
       )
-    ]),
+    ),
     html: `
         <main>
           <div id="a">A</div>
@@ -406,11 +417,12 @@ testTreeSegue("grow/shrink keyed", [
       `
   },
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h("div", { key: "a" }, "A"),
       h("div", { key: "c" }, "C"),
       h("div", { key: "d" }, "D")
-    ]),
+    ),
     html: `
         <main>
           <div id="a">A</div>
@@ -420,7 +432,7 @@ testTreeSegue("grow/shrink keyed", [
       `
   },
   {
-    tree: h("main", {}, [h("div", { key: "d" }, "D")]),
+    tree: h("main", h("div", { key: "d" }, "D")),
     html: `
         <main>
           <div id="d">D</div>
@@ -428,7 +440,8 @@ testTreeSegue("grow/shrink keyed", [
       `
   },
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h(
         "div",
         {
@@ -470,7 +483,7 @@ testTreeSegue("grow/shrink keyed", [
         },
         "E"
       )
-    ]),
+    ),
     html: `
         <main>
           <div id="a">A</div>
@@ -482,12 +495,13 @@ testTreeSegue("grow/shrink keyed", [
       `
   },
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h("div", { key: "d" }, "D"),
       h("div", { key: "c" }, "C"),
       h("div", { key: "b" }, "B"),
       h("div", { key: "a" }, "A")
-    ]),
+    ),
     html: `
         <main>
           <div id="d">D</div>
@@ -501,7 +515,8 @@ testTreeSegue("grow/shrink keyed", [
 
 testTreeSegue("mixed keyed/non-keyed", [
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h(
         "div",
         {
@@ -534,7 +549,7 @@ testTreeSegue("mixed keyed/non-keyed", [
         },
         "E"
       )
-    ]),
+    ),
     html: `
         <main>
           <div id="a">A</div>
@@ -546,13 +561,14 @@ testTreeSegue("mixed keyed/non-keyed", [
       `
   },
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h("div", { key: "e" }, "E"),
       h("div", {}, "C"),
       h("div", {}, "B"),
       h("div", { key: "d" }, "D"),
       h("div", { key: "a" }, "A")
-    ]),
+    ),
     html: `
         <main>
           <div id="e">E</div>
@@ -564,13 +580,14 @@ testTreeSegue("mixed keyed/non-keyed", [
       `
   },
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h("div", {}, "C"),
       h("div", { key: "d" }, "D"),
       h("div", { key: "a" }, "A"),
       h("div", { key: "e" }, "E"),
       h("div", {}, "B")
-    ]),
+    ),
     html: `
         <main>
           <div>C</div>
@@ -582,12 +599,13 @@ testTreeSegue("mixed keyed/non-keyed", [
       `
   },
   {
-    tree: h("main", {}, [
+    tree: h(
+      "main",
       h("div", { key: "e" }, "E"),
       h("div", { key: "d" }, "D"),
       h("div", {}, "B"),
       h("div", {}, "C")
-    ]),
+    ),
     html: `
         <main>
           <div id="e">E</div>

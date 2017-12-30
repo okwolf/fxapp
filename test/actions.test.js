@@ -27,7 +27,7 @@ test("sync updates", done => {
       state.value
     )
 
-  const main = app(state, actions, view, document.body)
+  const main = app(state, actions, view)
 
   main.up()
 })
@@ -58,7 +58,7 @@ test("async updates", done => {
       state.value
     )
 
-  const main = app(state, actions, view, document.body)
+  const main = app(state, actions, view)
 
   main.upAsync(1)
 })

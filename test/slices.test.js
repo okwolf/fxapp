@@ -72,7 +72,7 @@ test("state/actions tree", done => {
       state.fizz.buzz.value
     )
 
-  const main = app({}, actions, view, document.body)
+  const main = app({}, actions, view)
 
   main.fizz.buzz.fizzbuzz()
 })

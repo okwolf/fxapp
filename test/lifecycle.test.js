@@ -18,7 +18,7 @@ test("oncreate", done => {
       "foo"
     )
 
-  app({}, {}, view, document.body)
+  app({}, {}, view)
 })
 
 test("onupdate", done => {
@@ -44,7 +44,7 @@ test("onupdate", done => {
       state.value
     )
 
-  app(state, actions, view, document.body)
+  app(state, actions, view)
 })
 
 test("onremove", done => {
@@ -68,20 +68,18 @@ test("onremove", done => {
               actions.toggle()
             }
           },
-          [
-            h("li"),
-            h("li", {
-              onremove(element, remove) {
-                remove()
-                expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
-                done()
-              }
-            })
-          ]
+          h("li"),
+          h("li", {
+            onremove(element, remove) {
+              remove()
+              expect(document.body.innerHTML).toBe("<ul><li></li></ul>")
+              done()
+            }
+          })
         )
-      : h("ul", {}, [h("li")])
+      : h("ul", h("li"))
 
-  app(state, actions, view, document.body)
+  app(state, actions, view)
 })
 
 test("ondestroy", done => {
@@ -102,21 +100,20 @@ test("ondestroy", done => {
           {
             oncreate: () => actions.toggle()
           },
-          [
-            h("li"),
-            h("li", {}, [
-              h("span", {
-                ondestroy() {
-                  expect(removed).toBe(false)
-                  done()
-                }
-              })
-            ])
-          ]
+          h("li"),
+          h(
+            "li",
+            h("span", {
+              ondestroy() {
+                expect(removed).toBe(false)
+                done()
+              }
+            })
+          )
         )
-      : h("ul", {}, [h("li")])
+      : h("ul", h("li"))
 
-  app(state, actions, view, document.body)
+  app(state, actions, view)
 })
 
 test("onremove/ondestroy", done => {
@@ -139,24 +136,22 @@ test("onremove/ondestroy", done => {
               actions.toggle()
             }
           },
-          [
-            h("li"),
-            h("li", {
-              ondestroy() {
-                detached = true
-              },
-              onremove(element, remove) {
-                expect(detached).toBe(false)
-                remove()
-                expect(detached).toBe(true)
-                done()
-              }
-            })
-          ]
+          h("li"),
+          h("li", {
+            ondestroy() {
+              detached = true
+            },
+            onremove(element, remove) {
+              expect(detached).toBe(false)
+              remove()
+              expect(detached).toBe(true)
+              done()
+            }
+          })
         )
-      : h("ul", {}, [h("li")])
+      : h("ul", h("li"))
 
-  app(state, actions, view, document.body)
+  app(state, actions, view)
 })
 
 test("event bubbling", done => {
@@ -183,33 +178,31 @@ test("event bubbling", done => {
           done()
         }
       },
-      [
-        h("p", {
-          oncreate() {
-            expect(count++).toBe(2)
-          },
-          onupdate() {
-            expect(count++).toBe(6)
-          }
-        }),
-        h("p", {
-          oncreate() {
-            expect(count++).toBe(1)
-          },
-          onupdate() {
-            expect(count++).toBe(5)
-          }
-        }),
-        h("p", {
-          oncreate() {
-            expect(count++).toBe(0)
-          },
-          onupdate() {
-            expect(count++).toBe(4)
-          }
-        })
-      ]
+      h("p", {
+        oncreate() {
+          expect(count++).toBe(2)
+        },
+        onupdate() {
+          expect(count++).toBe(6)
+        }
+      }),
+      h("p", {
+        oncreate() {
+          expect(count++).toBe(1)
+        },
+        onupdate() {
+          expect(count++).toBe(5)
+        }
+      }),
+      h("p", {
+        oncreate() {
+          expect(count++).toBe(0)
+        },
+        onupdate() {
+          expect(count++).toBe(4)
+        }
+      })
     )
 
-  app(state, actions, view, document.body)
+  app(state, actions, view)
 })

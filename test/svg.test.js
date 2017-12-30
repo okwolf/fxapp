@@ -27,23 +27,20 @@ test("svg", done => {
           done()
         }
       },
-      [
-        h("p", { id: "foo" }, "foo"),
-        h("svg", { id: "bar", viewBox: "0 0 10 10" }, [
-          h("quux", {}, [
-            h("beep", {}, [h("ping", {}), h("pong", {})]),
-            h("bop", {}),
-            h("boop", {}, [h("ping", {}), h("pong", {})])
-          ]),
-          h("xuuq", {}, [
-            h("beep", {}),
-            h("bop", {}, [h("ping", {}), h("pong", {})]),
-            h("boop", {})
-          ])
-        ]),
-        h("p", { id: "baz" }, "baz")
-      ]
+      h("p", { id: "foo" }, "foo"),
+      h(
+        "svg",
+        { id: "bar", viewBox: "0 0 10 10" },
+        h(
+          "quux",
+          h("beep", h("ping"), h("pong")),
+          h("bop"),
+          h("boop", h("ping"), h("pong"))
+        ),
+        h("xuuq", h("beep"), h("bop", h("ping"), h("pong")), h("boop"))
+      ),
+      h("p", { id: "baz" }, "baz")
     )
 
-  app({}, {}, view, document.body)
+  app({}, {}, view)
 })

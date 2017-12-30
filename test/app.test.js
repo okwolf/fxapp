@@ -31,7 +31,7 @@ test("debouncing", done => {
       state.value
     )
 
-  const main = app(state, actions, view, document.body)
+  const main = app(state, actions, view)
 
   main.fire()
 })
@@ -58,5 +58,5 @@ test("actions in the view", done => {
     return h("div", {}, state.value)
   }
 
-  app(state, actions, view, document.body)
+  app(state, actions, view)
 })
