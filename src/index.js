@@ -1,15 +1,11 @@
 export function h() {
-  var args = arguments
-  var first = args[0]
-  if (typeof first === "function") {
-    return first(args[1] || {}, args[2])
+  if (typeof arguments[0] === "function") {
+    return arguments[0](arguments[1] || {}, arguments[2])
   }
-  var vnode = [first]
-  var length = args.length
+  var vnode = [arguments[0]]
   var i = 1
-  var second = args[i]
-  if (second === Object(second) && !Array.isArray(second)) {
-    vnode.push(second)
+  if (arguments[i] === Object(arguments[i]) && !Array.isArray(arguments[i])) {
+    vnode.push(arguments[i])
     i++
   } else {
     vnode.push({})
@@ -28,20 +24,18 @@ export function h() {
       children.push(convertChild(child))
     }
   }
-  for (; i < length; i++) {
-    addChild(args[i])
+  for (; i < arguments.length; i++) {
+    addChild(arguments[i])
   }
   vnode.push(children)
 
   return vnode
 }
 
-export function app(state, actions, view, container) {
-  var patchLock
+export function app(state, actions, view, container, patchLock, node) {
   var lifecycle = []
   container = container || document.body
   var root = container && container.children[0]
-  var node = root
 
   repaint(init([], (state = copy(state)), (actions = copy(actions))))
 
@@ -55,7 +49,9 @@ export function app(state, actions, view, container) {
       root = patch(container, root, node, (node = next))
     }
 
-    while ((next = lifecycle.pop())) next()
+    while ((next = lifecycle.pop())) {
+      next()
+    }
   }
 
   function repaint() {
@@ -65,8 +61,8 @@ export function app(state, actions, view, container) {
     }
   }
 
-  function copy(a, b) {
-    var target = {}
+  function copy(a, b, target) {
+    target = {}
 
     for (var i in a) target[i] = a[i]
     for (var i in b) target[i] = b[i]
@@ -141,14 +137,14 @@ export function app(state, actions, view, container) {
     }
   }
 
-  function createElement(node, isSVG) {
+  function createElement(node, isSVG, element) {
     var name = node[0]
     var props = node[1]
     var children = node[2]
     if (typeof node === "string") {
-      var element = document.createTextNode(node)
+      element = document.createTextNode(node)
     } else {
-      var element = (isSVG = isSVG || "svg" === name)
+      element = (isSVG = isSVG || "svg" === name)
         ? document.createElementNS("http://www.w3.org/2000/svg", name)
         : document.createElement(name)
 
