@@ -14,14 +14,11 @@ export function h() {
   function isValidChild(child) {
     return child != null && true !== child && false !== child
   }
-  function convertChild(child) {
-    return typeof child === "number" ? child + "" : child
-  }
   function addChild(child) {
     if (Array.isArray(child)) {
-      children.push(child.filter(isValidChild).map(convertChild))
+      children.push(child.filter(isValidChild))
     } else if (isValidChild(child)) {
-      children.push(convertChild(child))
+      children.push(child)
     }
   }
   for (; i < arguments.length; i++) {
@@ -141,7 +138,7 @@ export function app(state, actions, view, container, patchLock, node) {
     var name = node[0]
     var props = node[1]
     var children = node[2]
-    if (typeof node === "string") {
+    if (typeof node === "string" || typeof node === "number") {
       element = document.createTextNode(node)
     } else {
       element = (isSVG = isSVG || "svg" === name)
